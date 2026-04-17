@@ -11,8 +11,8 @@ FITBIT_AUTH_URL   = "https://www.fitbit.com/oauth2/authorize"
 FITBIT_TOKEN_URL  = "https://api.fitbit.com/oauth2/token"
 FITBIT_API_BASE   = "https://api.fitbit.com/1/user/-"
 
-CLIENT_ID     = os.getenv("FITBIT_CLIENT_ID", "")
-CLIENT_SECRET = os.getenv("FITBIT_CLIENT_SECRET", "")
+CLIENT_ID     = os.getenv("FITBIT_CLIENT_ID", "23VFGJ")
+CLIENT_SECRET = os.getenv("FITBIT_CLIENT_SECRET", "ac69eeb766f94c842aa7bc37be8b163c")
 REDIRECT_URI  = os.getenv("FITBIT_REDIRECT_URI", "http://localhost:5000/api/fitbit/callback")
 
 SCOPES = "heartrate activity sleep profile"

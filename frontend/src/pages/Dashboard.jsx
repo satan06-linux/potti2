@@ -75,6 +75,8 @@ export default function Dashboard() {
         Live Vitals
         {vitals?.source === 'fitbit'
           ? <span className="source-badge fitbit-badge">📡 Fitbit Live</span>
+          : vitals?.source === 'no_device'
+          ? <span className="source-badge nodev-badge">⚠️ No Device Connected</span>
           : <span className="source-badge sim-badge">🔵 Simulated</span>
         }
       </h2>

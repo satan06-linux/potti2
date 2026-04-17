@@ -106,12 +106,12 @@ export default function LiveMonitor() {
                 }
               </h3>
               <div className="mini-vitals">
-                <div className="mini-vital"><span>❤️ HR</span><strong>{vitals.heart_rate} bpm</strong></div>
-                <div className="mini-vital"><span>💨 SpO2</span><strong>{vitals.spo2}%</strong></div>
-                <div className="mini-vital"><span>🌡️ Temp</span><strong>{vitals.temperature}°C</strong></div>
-                <div className="mini-vital"><span>🩸 BP</span><strong>{vitals.bp_sys}/{vitals.bp_dia}</strong></div>
-                <div className="mini-vital"><span>👟 Steps</span><strong>{vitals.steps}</strong></div>
-                <div className="mini-vital"><span>🌙 Sleep</span><strong>{vitals.sleep_hours}h</strong></div>
+                <div className="mini-vital"><span>❤️ HR</span><strong>{vitals.heart_rate ?? '—'} {vitals.heart_rate ? 'bpm' : ''}</strong></div>
+                <div className="mini-vital"><span>💨 SpO2</span><strong>{vitals.spo2 ?? '—'} {vitals.spo2 ? '%' : ''}</strong></div>
+                <div className="mini-vital"><span>🌡️ Temp</span><strong>{vitals.temperature ?? '—'} {vitals.temperature ? '°C' : ''}</strong></div>
+                <div className="mini-vital"><span>🩸 BP</span><strong>{vitals.bp_sys && vitals.bp_dia ? `${vitals.bp_sys}/${vitals.bp_dia}` : '—'}</strong></div>
+                <div className="mini-vital"><span>👟 Steps</span><strong>{vitals.steps ?? '—'}</strong></div>
+                <div className="mini-vital"><span>🌙 Sleep</span><strong>{vitals.sleep_hours ? `${vitals.sleep_hours}h` : '—'}</strong></div>
               </div>
             </div>
           )}

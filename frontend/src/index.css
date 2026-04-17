@@ -135,6 +135,7 @@ body {
 .badge-medium { background: rgba(245,158,11,0.15);  color: var(--accent-yellow); }
 .badge-high   { background: rgba(239,68,68,0.15);   color: var(--accent-red); }
 .badge-info   { background: rgba(59,130,246,0.15);  color: var(--accent); }
+.badge-muted  { background: rgba(100,116,139,0.15); color: var(--text-muted); }
 
 /* ── Inputs ──────────────────────────────────────────────────── */
 input, select, textarea {
