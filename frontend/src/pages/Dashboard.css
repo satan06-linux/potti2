@@ -33,3 +33,8 @@
 @media (max-width: 600px) {
   .status-row, .vitals-grid, .risk-grid { grid-template-columns: 1fr; }
 }
+
+/* Data source badges */
+.source-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-left: 8px; }
+.fitbit-badge { background: rgba(0,176,185,0.15); color: #00B0B9; border: 1px solid rgba(0,176,185,0.3); }
+.sim-badge    { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }

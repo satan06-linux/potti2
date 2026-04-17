@@ -71,7 +71,13 @@ export default function Dashboard() {
       </div>
 
       {/* Vitals Grid */}
-      <h2 className="section-title">Live Vitals</h2>
+      <h2 className="section-title">
+        Live Vitals
+        {vitals?.source === 'fitbit'
+          ? <span className="source-badge fitbit-badge">📡 Fitbit Live</span>
+          : <span className="source-badge sim-badge">🔵 Simulated</span>
+        }
+      </h2>
       <div className="vitals-grid">
         <VitalCard icon={<Heart size={22}/>} label="Heart Rate" value={vitals?.heart_rate} unit="bpm" color="#ef4444"
           status={vitals?.heart_rate > 100 || vitals?.heart_rate < 55 ? 'critical' : 'normal'} />

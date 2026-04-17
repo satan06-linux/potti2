@@ -23,6 +23,9 @@ from modules.chat_agent import chat, get_history
 from modules.alert_manager import trigger_alert, get_alerts, resolve_alert
 from modules.digital_twin import update_twin, get_twin_summary
 from modules.loneliness_score import compute_loneliness
+from modules.fitbit_client import (
+    get_auth_url, exchange_code, save_tokens_from_exchange, is_connected
+)
 
 load_dotenv()
 
@@ -252,8 +255,58 @@ def caregiver_patients():
         result.append({**dict(u), "risk_level": risk["risk_level"], "risk_score": risk["risk_score"]})
     return jsonify(result)
 
-# ── Medication ────────────────────────────────────────────────────────────────
-@app.route("/api/medications", methods=["GET"])
+# ── Fitbit OAuth ──────────────────────────────────────────────────────────────
+@app.route("/api/fitbit/connect", methods=["GET"])
+@require_auth
+def fitbit_connect():
+    """Returns the Fitbit authorization URL for the frontend to redirect to."""
+    url = get_auth_url(g.user_id)
+    return jsonify({"auth_url": url})
+
+@app.route("/api/fitbit/callback", methods=["GET"])
+def fitbit_callback():
+    """Fitbit redirects here after user grants permission."""
+    code     = request.args.get("code")
+    user_id  = request.args.get("state")
+    error    = request.args.get("error")
+
+    if error or not code:
+        return f"<script>window.close()</script><p>Fitbit connection failed: {error}</p>", 400
+
+    try:
+        tokens = exchange_code(code)
+        save_tokens_from_exchange(int(user_id), tokens)
+        # Close the popup and notify the opener
+        return """
+        <html><body>
+        <p>✅ Fitbit connected! You can close this window.</p>
+        <script>
+          if (window.opener) {{ window.opener.postMessage('fitbit_connected', '*'); }}
+          setTimeout(() => window.close(), 1500);
+        </script>
+        </body></html>
+        """
+    except Exception as e:
+        return f"<p>Error: {e}</p>", 500
+
+@app.route("/api/fitbit/status", methods=["GET"])
+@require_auth
+def fitbit_status():
+    return jsonify({"connected": is_connected(g.user_id)})
+
+@app.route("/api/fitbit/disconnect", methods=["POST"])
+@require_auth
+def fitbit_disconnect():
+    conn = get_connection()
+    conn.execute(
+        "UPDATE users SET fitbit_access_token=NULL, fitbit_refresh_token=NULL WHERE id=?",
+        (g.user_id,)
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "disconnected"})
+
+# ── Medication ────────────────────────────────────────────────────────────────@app.route("/api/medications", methods=["GET"])
 @require_auth
 def get_medications():
     conn = get_connection()

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { User, Save, Shield } from 'lucide-react'
+import { User, Save, Shield, Watch, CheckCircle, XCircle } from 'lucide-react'
 import api from '../api'
 import './Profile.css'
 
@@ -8,12 +8,26 @@ export default function Profile() {
   const [form, setForm] = useState({})
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [fitbitConnected, setFitbitConnected] = useState(false)
+  const [fitbitLoading, setFitbitLoading] = useState(false)
 
   useEffect(() => {
     api.get('/profile').then(r => {
       setProfile(r.data)
       setForm(r.data)
     }).finally(() => setLoading(false))
+
+    api.get('/fitbit/status').then(r => setFitbitConnected(r.data.connected)).catch(() => {})
+
+    // Listen for Fitbit OAuth popup callback
+    const onMessage = (e) => {
+      if (e.data === 'fitbit_connected') {
+        setFitbitConnected(true)
+        setFitbitLoading(false)
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
   }, [])
 
   const save = async (e) => {
@@ -21,6 +35,21 @@ export default function Profile() {
     await api.put('/profile', form)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  const connectFitbit = async () => {
+    setFitbitLoading(true)
+    try {
+      const res = await api.get('/fitbit/connect')
+      window.open(res.data.auth_url, 'fitbit_auth', 'width=600,height=700,scrollbars=yes')
+    } catch {
+      setFitbitLoading(false)
+    }
+  }
+
+  const disconnectFitbit = async () => {
+    await api.post('/fitbit/disconnect')
+    setFitbitConnected(false)
   }
 
   if (loading) return <div className="loading-state">Loading profile...</div>
@@ -48,6 +77,38 @@ export default function Profile() {
               <div className="privacy-title">Privacy Protected</div>
               <div className="privacy-sub">Data processed locally. Encrypted at rest.</div>
             </div>
+          </div>
+
+          {/* Fitbit Integration Card */}
+          <div className="card fitbit-card">
+            <div className="fitbit-header">
+              <Watch size={20} color="#00B0B9" />
+              <span className="fitbit-title">Fitbit Wearable</span>
+            </div>
+            {fitbitConnected ? (
+              <div className="fitbit-connected">
+                <CheckCircle size={16} color="#10b981" />
+                <span>Connected — live data active</span>
+                <button className="btn btn-ghost fitbit-btn" onClick={disconnectFitbit}>
+                  Disconnect
+                </button>
+              </div>
+            ) : (
+              <div className="fitbit-disconnected">
+                <XCircle size={16} color="#94a3b8" />
+                <span>Not connected</span>
+                <button
+                  className="btn btn-primary fitbit-btn"
+                  onClick={connectFitbit}
+                  disabled={fitbitLoading}
+                >
+                  {fitbitLoading ? 'Opening...' : 'Connect Fitbit'}
+                </button>
+              </div>
+            )}
+            <p className="fitbit-note">
+              Connects heart rate, steps, sleep & SpO2 from your Fitbit device.
+            </p>
           </div>
         </div>
 

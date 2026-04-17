@@ -98,7 +98,13 @@ export default function LiveMonitor() {
 
           {vitals && (
             <div className="card vitals-mini">
-              <h3><Activity size={16}/> Live Vitals</h3>
+              <h3>
+                <Activity size={16}/> Live Vitals
+                {vitals.source === 'fitbit'
+                  ? <span className="source-badge fitbit-badge" style={{fontSize:10,marginLeft:6}}>📡 Fitbit</span>
+                  : <span className="source-badge sim-badge" style={{fontSize:10,marginLeft:6}}>🔵 Sim</span>
+                }
+              </h3>
               <div className="mini-vitals">
                 <div className="mini-vital"><span>❤️ HR</span><strong>{vitals.heart_rate} bpm</strong></div>
                 <div className="mini-vital"><span>💨 SpO2</span><strong>{vitals.spo2}%</strong></div>

@@ -23,8 +23,17 @@ def init_db():
         language TEXT DEFAULT 'en',
         medical_history TEXT,
         preferences TEXT,
+        fitbit_access_token TEXT,
+        fitbit_refresh_token TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )""")
+
+    # Migrate existing DBs — add Fitbit columns if missing
+    existing = [r[1] for r in c.execute("PRAGMA table_info(users)").fetchall()]
+    if "fitbit_access_token" not in existing:
+        c.execute("ALTER TABLE users ADD COLUMN fitbit_access_token TEXT")
+    if "fitbit_refresh_token" not in existing:
+        c.execute("ALTER TABLE users ADD COLUMN fitbit_refresh_token TEXT")
 
     c.execute("""CREATE TABLE IF NOT EXISTS health_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

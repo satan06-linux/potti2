@@ -18,3 +18,12 @@
 .save-btn { align-self: flex-start; padding: 14px 32px; font-size: 16px; }
 
 @media (max-width: 800px) { .profile-layout { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+
+/* Fitbit Integration Card */
+.fitbit-card { display: flex; flex-direction: column; gap: 10px; }
+.fitbit-header { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
+.fitbit-connected, .fitbit-disconnected { display: flex; align-items: center; gap: 8px; font-size: 13px; flex-wrap: wrap; }
+.fitbit-connected { color: #10b981; }
+.fitbit-disconnected { color: var(--text-muted); }
+.fitbit-btn { margin-left: auto; padding: 6px 14px; font-size: 12px; }
+.fitbit-note { font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.5; }
