@@ -1,0 +1,27 @@
+.caregiver-page { max-width: 1200px; }
+.caregiver-layout { display: grid; grid-template-columns: 300px 1fr; gap: 24px; }
+.patients-panel { display: flex; flex-direction: column; gap: 10px; }
+.patient-card { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 14px 16px; }
+.patient-card.selected { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+.patient-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.patient-info { flex: 1; }
+.patient-name { font-size: 14px; font-weight: 600; }
+.patient-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.patient-detail { display: flex; flex-direction: column; gap: 16px; }
+.detail-header { display: flex; align-items: center; gap: 16px; }
+.detail-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; flex-shrink: 0; }
+.detail-header h2 { font-size: 20px; font-weight: 700; }
+.detail-header p { color: var(--text-muted); font-size: 14px; }
+.risk-badge-large { margin-left: auto; font-size: 22px; font-weight: 800; }
+
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-grid h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.factor-item, .rec-item { font-size: 13px; padding: 8px 10px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px; }
+
+.report-card { display: flex; align-items: center; gap: 16px; }
+.report-title { font-size: 15px; font-weight: 600; }
+.report-sub { font-size: 13px; color: var(--text-muted); }
+.report-card .btn { margin-left: auto; }
+
+@media (max-width: 900px) { .caregiver-layout { grid-template-columns: 1fr; } .detail-grid { grid-template-columns: 1fr; } }

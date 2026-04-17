@@ -1,0 +1,29 @@
+.emotion-page { max-width: 1200px; }
+.insights-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.chart-card-wide { grid-column: 1 / -1; }
+.card-header { font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+.loneliness-score { font-size: 56px; font-weight: 800; margin: 12px 0 8px; }
+.loneliness-score span { font-size: 20px; color: var(--text-muted); }
+.loneliness-bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; margin: 12px 0; }
+.loneliness-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+.reasons { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.reason-item { font-size: 13px; color: var(--text-secondary); padding: 6px 10px; background: var(--bg-secondary); border-radius: 8px; }
+.conv-count { font-size: 13px; color: var(--text-muted); margin-top: 12px; }
+
+.emotion-legend { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.emo-legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.emo-dot { width: 10px; height: 10px; border-radius: 50%; }
+.emo-legend-item strong { margin-left: auto; }
+
+.anomaly-count { font-size: 56px; font-weight: 800; margin: 12px 0 4px; }
+.anomaly-label { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.twin-updated { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+.routine-list { display: flex; flex-direction: column; gap: 6px; }
+.routine-list strong { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; display: block; }
+.routine-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: var(--bg-secondary); border-radius: 8px; font-size: 13px; }
+.routine-hour { color: var(--accent); font-weight: 600; min-width: 40px; }
+.routine-emotion { margin-left: auto; color: var(--text-muted); text-transform: capitalize; }
+.no-data { font-size: 13px; color: var(--text-muted); padding: 12px; text-align: center; }
+
+@media (max-width: 900px) { .insights-grid { grid-template-columns: 1fr; } .chart-card-wide { grid-column: 1; } }

@@ -1,0 +1,35 @@
+.dashboard { max-width: 1200px; }
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+.page-header h1 { font-size: 28px; font-weight: 700; }
+.subtitle { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+.section-title { font-size: 16px; font-weight: 600; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; }
+.loading-state { display: flex; align-items: center; justify-content: center; height: 60vh; color: var(--text-muted); font-size: 16px; }
+
+.status-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 8px; }
+.status-card { text-align: center; padding: 20px 16px; }
+.status-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.status-value { font-size: 28px; font-weight: 700; margin-bottom: 8px; text-transform: capitalize; }
+.status-sub { font-size: 12px; color: var(--text-muted); }
+
+.vitals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+.risk-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.risk-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; font-size: 14px; }
+.recommendations { display: flex; flex-direction: column; gap: 8px; }
+.rec-item { padding: 12px 16px; font-size: 14px; }
+
+.alerts-list { display: flex; flex-direction: column; gap: 10px; }
+.alert-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; }
+.alert-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.alert-critical .alert-dot { background: var(--accent-red); }
+.alert-warning .alert-dot { background: var(--accent-yellow); }
+.alert-type { font-size: 13px; font-weight: 600; text-transform: capitalize; }
+.alert-msg { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+@media (max-width: 1024px) {
+  .status-row { grid-template-columns: repeat(2, 1fr); }
+  .vitals-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .status-row, .vitals-grid, .risk-grid { grid-template-columns: 1fr; }
+}

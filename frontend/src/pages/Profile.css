@@ -1,0 +1,20 @@
+.profile-page { max-width: 1000px; }
+.profile-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+.profile-sidebar { display: flex; flex-direction: column; gap: 16px; }
+.profile-avatar-card { text-align: center; padding: 28px 20px; }
+.profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 16px; }
+.profile-name { font-size: 18px; font-weight: 700; }
+.profile-username { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+.profile-since { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+.privacy-card { display: flex; align-items: flex-start; gap: 12px; }
+.privacy-title { font-size: 14px; font-weight: 600; }
+.privacy-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.profile-form { display: flex; flex-direction: column; gap: 16px; }
+.form-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+.save-btn { align-self: flex-start; padding: 14px 32px; font-size: 16px; }
+
+@media (max-width: 800px) { .profile-layout { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
