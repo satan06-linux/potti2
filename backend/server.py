@@ -284,6 +284,27 @@ def analyze_video_upload():
         try: os.unlink(tmp_path)
         except: pass
 
+# ── YouTube Video Analysis ────────────────────────────────────────────────────
+@app.route("/api/analyze-youtube", methods=["POST"])
+@require_auth
+def analyze_youtube():
+    """Analyze a YouTube video URL for emotional health assessment."""
+    d = request.json
+    url = d.get("url", "").strip()
+    if not url:
+        return jsonify({"error": "No URL provided"}), 400
+    from modules.video_analyzer import analyze_from_url
+    result = analyze_from_url(url)
+    if result.get("status") == "error":
+        return jsonify(result), 400
+    if result.get("risk_level") in ["medium", "high"]:
+        trigger_alert(
+            g.user_id, "video_analysis",
+            "critical" if result["risk_level"] == "high" else "warning",
+            f"YouTube video analysis: {result.get('ai_analysis','')[:200]}"
+        )
+    return jsonify(result)
+
 # ── SOS ──────────────────────────────────────────────────────────────────────
 @app.route("/api/sos", methods=["POST"])
 @require_auth

@@ -1,9 +1,9 @@
 """
-Video Analysis Module — extracts frames from uploaded video,
+Video Analysis Module — extracts frames from uploaded video OR YouTube URL,
 runs DeepFace emotion detection on each frame, then uses Groq LLM
 to generate a comprehensive health/emotional analysis report.
 """
-import os, cv2, base64, tempfile, json
+import os, cv2, tempfile, json, re
 import numpy as np
 from pathlib import Path
 from dotenv import load_dotenv
@@ -11,6 +11,33 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
 GROQ_MODEL = "llama-3.3-70b-versatile"
+
+
+def is_youtube_url(url: str) -> bool:
+    return bool(re.search(r'(youtube\.com/watch|youtu\.be/|youtube\.com/shorts)', url))
+
+
+def download_youtube(url: str, output_dir: str) -> str:
+    """Download YouTube video using yt-dlp. Returns path to downloaded file."""
+    import yt_dlp
+    out_path = os.path.join(output_dir, "yt_video.%(ext)s")
+    ydl_opts = {
+        "format": "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]",
+        "outtmpl": out_path,
+        "quiet": True,
+        "no_warnings": True,
+        "merge_output_format": "mp4",
+        "noplaylist": True,
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=True)
+        title = info.get("title", "Unknown")
+        # Find the downloaded file
+        for ext in ["mp4", "mkv", "webm", "avi"]:
+            candidate = os.path.join(output_dir, f"yt_video.{ext}")
+            if os.path.exists(candidate):
+                return candidate, title
+    raise FileNotFoundError("Downloaded video file not found")
 
 
 def extract_frames(video_path: str, max_frames: int = 12) -> list:
@@ -49,7 +76,7 @@ def analyze_frame_emotion(frame) -> dict:
         return None
 
 
-def analyze_video(video_path: str) -> dict:
+def analyze_video(video_path: str, title: str = "") -> dict:
     """
     Full pipeline:
     1. Extract frames
@@ -60,6 +87,7 @@ def analyze_video(video_path: str) -> dict:
     """
     result = {
         "status": "ok",
+        "title": title,
         "duration_seconds": 0,
         "frames_analyzed": 0,
         "emotion_timeline": [],
@@ -68,7 +96,8 @@ def analyze_video(video_path: str) -> dict:
         "health_indicators": [],
         "ai_analysis": "",
         "risk_level": "low",
-        "recommendations": []
+        "recommendations": [],
+        "summary_for_elderly": ""
     }
 
     # Step 1: Extract frames
@@ -193,3 +222,33 @@ def _rule_based_recommendations(summary: dict) -> list:
         recs.append("Check if the person is in physical pain")
         recs.append("Review medication schedule for any missed doses")
     return recs
+
+
+def analyze_from_url(url: str) -> dict:
+    """
+    Download a YouTube video and analyze it.
+    Returns same dict as analyze_video().
+    """
+    if not is_youtube_url(url):
+        return {"status": "error", "ai_analysis": "Only YouTube URLs are supported (youtube.com or youtu.be)"}
+
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        print(f"[VideoAnalyzer] Downloading YouTube video: {url}")
+        video_path, title = download_youtube(url, tmp_dir)
+        print(f"[VideoAnalyzer] Downloaded: {title} → {video_path}")
+        result = analyze_video(video_path, title=title)
+        result["source"] = "youtube"
+        result["youtube_url"] = url
+        return result
+    except Exception as e:
+        print(f"[VideoAnalyzer] YouTube download failed: {e}")
+        return {
+            "status": "error",
+            "ai_analysis": f"Could not download video: {str(e)}. Make sure the URL is a valid public YouTube video."
+        }
+    finally:
+        # Cleanup temp files
+        import shutil
+        try: shutil.rmtree(tmp_dir)
+        except: pass
