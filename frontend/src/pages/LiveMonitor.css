@@ -1,32 +1,97 @@
 .live-monitor { max-width: 1200px; }
-.monitor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
-.camera-card { padding: 0; overflow: hidden; }
-.camera-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
-.camera-header span { font-weight: 600; }
-.status-indicator { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 6px 12px; border-radius: 20px; background: var(--bg-secondary); text-transform: capitalize; }
-.status-indicator span { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-.webcam-feed { width: 100%; display: block; }
-.camera-placeholder { height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--text-muted); }
 
+.monitor-toggle-btn { font-size: 16px !important; padding: 14px 24px !important; }
+
+/* Fall Alert Banner */
+.fall-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(239,68,68,0.12);
+  border: 2px solid #ef4444;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease;
+  flex-wrap: wrap;
+}
+.fall-alert-banner svg { color: #ef4444; flex-shrink: 0; }
+.fall-alert-text { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.fall-alert-text strong { font-size: 16px; color: #ef4444; }
+.fall-alert-text span   { font-size: 14px; color: #94a3b8; }
+.fall-ok-btn {
+  background: #10b981; color: white;
+  font-size: 15px !important; padding: 12px 20px !important;
+  border-radius: 12px !important; white-space: nowrap; font-weight: 700;
+}
+
+/* Monitor grid */
+.monitor-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+
+/* Camera */
+.camera-card { padding: 0; overflow: hidden; }
+.camera-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  font-weight: 600; font-size: 15px;
+}
+.status-indicator { display: flex; align-items: center; gap: 8px; font-size: 13px; text-transform: capitalize; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.webcam-wrapper { position: relative; }
+.webcam-feed { width: 100%; display: block; }
+.fall-overlay-badge {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(239,68,68,0.9); color: white;
+  font-size: 16px; font-weight: 800; padding: 8px 20px; border-radius: 20px;
+  animation: pulse 1s infinite;
+}
+.camera-placeholder {
+  height: 380px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px; color: var(--text-muted);
+}
+.camera-placeholder p { font-size: 16px; }
+.camera-hint { font-size: 13px !important; color: var(--text-muted); }
+
+/* Side panels */
 .side-panels { display: flex; flex-direction: column; gap: 16px; }
-.emotion-panel h3, .vitals-mini h3, .status-legend h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.emotion-panel h3, .vitals-mini h3, .fall-status-card h3 {
+  font-size: 15px; font-weight: 600; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* Emotion display */
 .emotion-display { text-align: center; }
-.emotion-big { font-size: 32px; font-weight: 700; text-transform: capitalize; margin-bottom: 12px; }
-.confidence-bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.emotion-emoji-big { font-size: 48px; margin-bottom: 8px; }
+.emotion-big { font-size: 24px; font-weight: 700; text-transform: capitalize; margin-bottom: 10px; }
+.confidence-bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
 .confidence-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
 .confidence-label { font-size: 13px; color: var(--text-muted); }
 
+/* Fall status card */
+.fall-status-card { transition: border-color 0.3s; }
+.fall-status-card.fall-active { border-color: #ef4444 !important; background: rgba(239,68,68,0.05); }
+.fall-status-idle { font-size: 13px; color: var(--text-muted); text-align: center; padding: 8px 0; }
+.fall-status-ok, .fall-status-alert { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.fall-status-icon { font-size: 36px; }
+.fall-status-ok div  { font-size: 14px; color: #10b981; font-weight: 600; }
+.fall-status-alert div { font-size: 14px; color: #ef4444; font-weight: 600; }
+.fall-ok-btn-sm {
+  background: #10b981; color: white; font-size: 13px !important;
+  padding: 8px 16px !important; border-radius: 10px !important; margin-top: 4px;
+}
+
+/* Mini vitals */
 .mini-vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.mini-vital { display: flex; flex-direction: column; gap: 4px; padding: 10px; background: var(--bg-secondary); border-radius: 10px; }
-.mini-vital span { font-size: 12px; color: var(--text-muted); }
-.mini-vital strong { font-size: 15px; }
+.mini-vital { display: flex; flex-direction: column; gap: 4px; padding: 12px; background: var(--bg-secondary); border-radius: 12px; }
+.mini-vital span   { font-size: 12px; color: var(--text-muted); }
+.mini-vital strong { font-size: 16px; font-weight: 700; }
 
-.legend-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
-.legend-item:last-child { border-bottom: none; }
-.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-@media (max-width: 900px) { .monitor-grid { grid-template-columns: 1fr; } }
-
-.source-badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+/* Source badges */
+.source-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
 .fitbit-badge { background: rgba(0,176,185,0.15); color: #00B0B9; border: 1px solid rgba(0,176,185,0.3); }
-.sim-badge    { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+.nodev-badge  { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+
+@media (max-width: 900px) {
+  .monitor-grid { grid-template-columns: 1fr; }
+  .fall-alert-banner { flex-direction: column; align-items: flex-start; }
+}

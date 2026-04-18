@@ -1,0 +1,66 @@
+.med-reminder-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+.med-reminder-card {
+  background: #1a2235;
+  border: 2px solid #3b82f6;
+  border-radius: 24px;
+  padding: 40px 32px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(59,130,246,0.3);
+}
+
+.med-reminder-icon { font-size: 72px; margin-bottom: 16px; display: block; }
+.med-reminder-card h2 { font-size: 28px; font-weight: 800; color: #f1f5f9; margin-bottom: 10px; }
+.med-reminder-card p  { font-size: 16px; color: #94a3b8; margin-bottom: 24px; }
+
+.med-reminder-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+
+.med-reminder-item {
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.med-reminder-name { font-size: 18px; font-weight: 700; color: #f1f5f9; flex: 1; }
+.med-reminder-time { font-size: 13px; color: #64748b; }
+
+.med-taken-btn {
+  background: #10b981;
+  color: white;
+  font-size: 15px !important;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  white-space: nowrap;
+  font-weight: 700;
+}
+.med-taken-btn:hover { background: #059669; }
+
+.med-dismiss-btn {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #2a3a55;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  width: 100%;
+  justify-content: center;
+}
+.med-dismiss-btn:hover { border-color: #64748b; color: #94a3b8; }

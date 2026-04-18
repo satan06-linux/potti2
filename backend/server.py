@@ -255,6 +255,34 @@ def caregiver_patients():
         result.append({**dict(u), "risk_level": risk["risk_level"], "risk_score": risk["risk_score"]})
     return jsonify(result)
 
+# ── SOS ──────────────────────────────────────────────────────────────────────
+@app.route("/api/sos", methods=["POST"])
+@require_auth
+def sos():
+    """Emergency SOS — immediately alerts caregiver via SMS and logs critical alert."""
+    conn = get_connection()
+    user = conn.execute("SELECT full_name FROM users WHERE id=?", (g.user_id,)).fetchone()
+    conn.close()
+    name = user["full_name"] if user else "Unknown"
+    msg = f"🆘 EMERGENCY SOS from {name}! They need immediate assistance. Please check on them right away."
+    trigger_alert(g.user_id, "SOS", "critical", msg)
+    socketio.emit("sos_alert", {"user": name, "timestamp": datetime.now().isoformat()})
+    return jsonify({"status": "sent", "message": "Emergency alert dispatched"})
+
+# ── Fall Detection ────────────────────────────────────────────────────────────
+@app.route("/api/detect-fall", methods=["POST"])
+@require_auth
+def detect_fall():
+    """Analyze webcam frame for fall detection using MediaPipe pose."""
+    from modules.fall_detector import detect_fall_from_b64, log_fall_event
+    d = request.json
+    image_b64 = d.get("image", "")
+    result = detect_fall_from_b64(image_b64)
+    if result.get("fallen") and result.get("confidence", 0) > 60:
+        log_fall_event(g.user_id, result["confidence"])
+        socketio.emit("fall_detected", {"confidence": result["confidence"], "user_id": g.user_id})
+    return jsonify(result)
+
 # ── Fitbit OAuth ──────────────────────────────────────────────────────────────
 @app.route("/api/fitbit/connect", methods=["GET"])
 @require_auth
@@ -306,7 +334,8 @@ def fitbit_disconnect():
     conn.close()
     return jsonify({"status": "disconnected"})
 
-# ── Medication ────────────────────────────────────────────────────────────────@app.route("/api/medications", methods=["GET"])
+# ── Medication ────────────────────────────────────────────────────────────────
+@app.route("/api/medications", methods=["GET"])
 @require_auth
 def get_medications():
     conn = get_connection()
