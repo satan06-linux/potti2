@@ -85,7 +85,9 @@ export default function Dashboard() {
           status={vitals?.heart_rate > 100 || vitals?.heart_rate < 55 ? 'critical' : 'normal'} />
         <VitalCard icon={<Wind size={22}/>} label="SpO2" value={vitals?.spo2} unit="%" color="#3b82f6"
           status={vitals?.spo2 < 94 ? 'critical' : 'normal'} />
-        <VitalCard icon={<Activity size={22}/>} label="Blood Pressure" value={`${vitals?.bp_sys}/${vitals?.bp_dia}`} unit="mmHg" color="#8b5cf6"
+        <VitalCard icon={<Activity size={22}/>} label="Blood Pressure"
+          value={vitals?.bp_sys != null && vitals?.bp_dia != null ? `${vitals.bp_sys}/${vitals.bp_dia}` : null}
+          unit="mmHg" color="#8b5cf6"
           status={vitals?.bp_sys > 140 ? 'warning' : 'normal'} />
         <VitalCard icon={<Thermometer size={22}/>} label="Temperature" value={vitals?.temperature} unit="°C" color="#f59e0b"
           status={vitals?.temperature > 37.8 ? 'warning' : 'normal'} />

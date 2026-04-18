@@ -19,7 +19,6 @@ export default function Profile() {
 
     api.get('/fitbit/status').then(r => setFitbitConnected(r.data.connected)).catch(() => {})
 
-    // Listen for Fitbit OAuth popup callback
     const onMessage = (e) => {
       if (e.data === 'fitbit_connected') {
         setFitbitConnected(true)
@@ -63,7 +62,44 @@ export default function Profile() {
         </div>
       </div>
 
+      {/* ── Fitbit Banner — always visible at top ── */}
+      <div className={`card fitbit-banner ${fitbitConnected ? 'fitbit-banner-on' : 'fitbit-banner-off'}`}>
+        <div className="fitbit-banner-left">
+          <Watch size={28} color={fitbitConnected ? '#10b981' : '#00B0B9'} />
+          <div>
+            <div className="fitbit-banner-title">Fitbit Wearable Integration</div>
+            <div className="fitbit-banner-sub">
+              {fitbitConnected
+                ? 'Live data active — heart rate, steps, sleep & SpO2 syncing from your device'
+                : 'Connect your Fitbit to stream real health data into the dashboard'}
+            </div>
+          </div>
+        </div>
+        <div className="fitbit-banner-right">
+          {fitbitConnected ? (
+            <>
+              <span className="fitbit-status-pill connected"><CheckCircle size={14}/> Connected</span>
+              <button className="btn btn-ghost fitbit-action-btn" onClick={disconnectFitbit}>
+                Disconnect
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="fitbit-status-pill disconnected"><XCircle size={14}/> Not connected</span>
+              <button
+                className="btn btn-primary fitbit-action-btn"
+                onClick={connectFitbit}
+                disabled={fitbitLoading}
+              >
+                {fitbitLoading ? 'Opening...' : '🔗 Connect Fitbit'}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="profile-layout">
+        {/* Sidebar */}
         <div className="profile-sidebar">
           <div className="card profile-avatar-card">
             <div className="profile-avatar">{profile?.full_name?.[0] || 'U'}</div>
@@ -78,40 +114,9 @@ export default function Profile() {
               <div className="privacy-sub">Data processed locally. Encrypted at rest.</div>
             </div>
           </div>
-
-          {/* Fitbit Integration Card */}
-          <div className="card fitbit-card">
-            <div className="fitbit-header">
-              <Watch size={20} color="#00B0B9" />
-              <span className="fitbit-title">Fitbit Wearable</span>
-            </div>
-            {fitbitConnected ? (
-              <div className="fitbit-connected">
-                <CheckCircle size={16} color="#10b981" />
-                <span>Connected — live data active</span>
-                <button className="btn btn-ghost fitbit-btn" onClick={disconnectFitbit}>
-                  Disconnect
-                </button>
-              </div>
-            ) : (
-              <div className="fitbit-disconnected">
-                <XCircle size={16} color="#94a3b8" />
-                <span>Not connected</span>
-                <button
-                  className="btn btn-primary fitbit-btn"
-                  onClick={connectFitbit}
-                  disabled={fitbitLoading}
-                >
-                  {fitbitLoading ? 'Opening...' : 'Connect Fitbit'}
-                </button>
-              </div>
-            )}
-            <p className="fitbit-note">
-              Connects heart rate, steps, sleep & SpO2 from your Fitbit device.
-            </p>
-          </div>
         </div>
 
+        {/* Form */}
         <form className="profile-form" onSubmit={save}>
           <div className="card form-section">
             <h3><User size={16}/> Personal Information</h3>

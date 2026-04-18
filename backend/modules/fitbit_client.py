@@ -5,6 +5,7 @@ Fitbit API docs: https://dev.fitbit.com/build/reference/web-api/
 import os, requests
 from datetime import datetime, date
 from urllib.parse import urlencode
+from typing import Optional
 from database.db import get_connection
 
 FITBIT_AUTH_URL   = "https://www.fitbit.com/oauth2/authorize"
@@ -50,7 +51,7 @@ def exchange_code(code: str) -> dict:
     return resp.json()
 
 
-def refresh_token(user_id: int) -> str | None:
+def refresh_token(user_id: int) -> Optional[str]:
     """Refresh expired access token; returns new access token or None."""
     conn = get_connection()
     row = conn.execute(
@@ -89,7 +90,7 @@ def save_tokens_from_exchange(user_id: int, token_data: dict):
     _save_tokens(user_id, token_data["access_token"], token_data["refresh_token"])
 
 
-def get_access_token(user_id: int) -> str | None:
+def get_access_token(user_id: int) -> Optional[str]:
     conn = get_connection()
     row = conn.execute(
         "SELECT fitbit_access_token FROM users WHERE id=?", (user_id,)
@@ -104,7 +105,7 @@ def is_connected(user_id: int) -> bool:
 
 # ── Data fetchers ─────────────────────────────────────────────────────────────
 
-def _get(user_id: int, path: str) -> dict | None:
+def _get(user_id: int, path: str) -> Optional[dict]:
     """Authenticated GET to Fitbit API; auto-refreshes token on 401."""
     token = get_access_token(user_id)
     if not token:
@@ -201,7 +202,7 @@ def fetch_spo2(user_id: int) -> dict:
         return {}
 
 
-def fetch_all_vitals(user_id: int) -> dict | None:
+def fetch_all_vitals(user_id: int) -> Optional[dict]:
     """
     Aggregate all Fitbit data into a single vitals dict.
     Returns None if user is not connected.
