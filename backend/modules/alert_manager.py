@@ -1,4 +1,4 @@
-"""Alert Manager — logs alerts, sends email/mock SMS."""
+"""Alert Manager — logs alerts, sends email + WhatsApp/SMS for critical events."""
 import os, smtplib, sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -11,6 +11,13 @@ def trigger_alert(user_id: int, alert_type: str, severity: str, message: str):
     _log_alert(user_id, alert_type, severity, message)
     _console_alert(severity, alert_type, message)
     _email_alert(severity, alert_type, message)
+    # WhatsApp/SMS only for critical alerts
+    if severity == "critical":
+        try:
+            from modules.twilio_alerts import send_whatsapp_alert
+            send_whatsapp_alert(f"{alert_type}: {message}", severity)
+        except Exception as e:
+            print(f"[AlertManager] WhatsApp alert failed: {e}")
     return {"alert_type": alert_type, "severity": severity, "message": message}
 
 def _log_alert(user_id, alert_type, severity, message):
@@ -29,17 +36,19 @@ def _console_alert(severity, alert_type, message):
     print(f"\n{tag} [{severity.upper()}] {alert_type}: {message}\n")
 
 def _email_alert(severity, alert_type, message):
-    sender = os.getenv("ALERT_EMAIL_SENDER", "").strip()
+    sender   = os.getenv("ALERT_EMAIL_SENDER", "").strip()
     password = os.getenv("ALERT_EMAIL_PASSWORD", "").strip()
     receiver = os.getenv("CAREGIVER_EMAIL", "").strip()
     if not (sender and password and receiver):
         return
     try:
         msg = MIMEMultipart()
-        msg["From"] = sender
-        msg["To"] = receiver
+        msg["From"]    = sender
+        msg["To"]      = receiver
         msg["Subject"] = f"[ElderCare {severity.upper()}] {alert_type} Alert"
-        msg.attach(MIMEText(f"Severity: {severity}\nType: {alert_type}\nMessage: {message}", "plain"))
+        msg.attach(MIMEText(
+            f"Severity: {severity}\nType: {alert_type}\nMessage: {message}", "plain"
+        ))
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
             s.login(sender, password)
             s.sendmail(sender, receiver, msg.as_string())
