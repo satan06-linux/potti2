@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
-import { useParticles, useAutoTilt } from './hooks/use3D'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -17,28 +16,19 @@ import VideoAnalysis from './pages/VideoAnalysis'
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',color:'#94a3b8'}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',color:'#94a3b8',fontSize:18}}>
       Loading...
     </div>
   )
   return user ? children : <Navigate to="/login" />
 }
 
-/* Attaches particles + tilt to every page render */
-function AppEffects() {
-  useParticles()
-  useAutoTilt()
-  return null
-}
-
 export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        {/* 3D background canvas — sits behind everything */}
         <canvas id="particles-canvas" />
         <BrowserRouter>
-          <AppEffects />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>

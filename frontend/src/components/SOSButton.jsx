@@ -3,42 +3,40 @@
  * One tap → sends SMS to caregiver + logs critical alert.
  * Designed for elderly users: huge, red, impossible to miss.
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import api from '../api'
 import './SOSButton.css'
 
 export default function SOSButton() {
-  const [state, setState] = useState('idle') // idle | confirming | sending | sent | error
+  const [state, setState] = useState('idle')
 
-  const handlePress = () => {
-    if (state === 'idle') {
-      setState('confirming')
-      // Auto-confirm after 3 seconds if no cancel
-      setTimeout(() => {
-        setState(s => s === 'confirming' ? 'auto-send' : s)
+  // Handle auto-send via useEffect, not during render
+  useEffect(() => {
+    if (state === 'confirming') {
+      const timer = setTimeout(() => {
+        setState('sending')
+        api.post('/sos')
+          .then(() => setState('sent'))
+          .catch(() => setState('error'))
       }, 3000)
+      return () => clearTimeout(timer)
     }
-  }
+    if (state === 'sent' || state === 'error') {
+      const timer = setTimeout(() => setState('idle'), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [state])
 
-  const confirm = async () => {
+  const handlePress = () => { if (state === 'idle') setState('confirming') }
+
+  const confirm = () => {
     setState('sending')
-    try {
-      await api.post('/sos')
-      setState('sent')
-      setTimeout(() => setState('idle'), 5000)
-    } catch {
-      setState('error')
-      setTimeout(() => setState('idle'), 3000)
-    }
+    api.post('/sos')
+      .then(() => setState('sent'))
+      .catch(() => setState('error'))
   }
 
   const cancel = () => setState('idle')
-
-  // Auto-send triggered
-  if (state === 'auto-send') {
-    confirm()
-    return null
-  }
 
   return (
     <>

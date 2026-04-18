@@ -18,26 +18,70 @@ def is_youtube_url(url: str) -> bool:
 
 
 def download_youtube(url: str, output_dir: str) -> str:
-    """Download YouTube video using yt-dlp. Returns path to downloaded file."""
+    """
+    Download YouTube video using yt-dlp with cookies from browser.
+    Uses Chrome/Edge cookies to authenticate and bypass PO token requirement.
+    """
     import yt_dlp
     out_path = os.path.join(output_dir, "yt_video.%(ext)s")
-    ydl_opts = {
-        "format": "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]",
+
+    # Try with browser cookies first (most reliable), then fallback options
+    configs = [
+        # Option 1: Use Chrome cookies (works if Chrome is installed and logged in)
+        {
+            "cookiesfrombrowser": ("chrome",),
+            "extractor_args": {"youtube": {"player_client": ["web"]}},
+        },
+        # Option 2: Use Edge cookies
+        {
+            "cookiesfrombrowser": ("edge",),
+            "extractor_args": {"youtube": {"player_client": ["web"]}},
+        },
+        # Option 3: mweb client (mobile web — sometimes works without cookies)
+        {
+            "extractor_args": {"youtube": {"player_client": ["mweb"]}},
+            "http_headers": {
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
+            },
+        },
+    ]
+
+    base_opts = {
+        "format": "best[height<=480]/best",
         "outtmpl": out_path,
         "quiet": True,
         "no_warnings": True,
-        "merge_output_format": "mp4",
         "noplaylist": True,
+        "socket_timeout": 30,
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        title = info.get("title", "Unknown")
-        # Find the downloaded file
-        for ext in ["mp4", "mkv", "webm", "avi"]:
-            candidate = os.path.join(output_dir, f"yt_video.{ext}")
-            if os.path.exists(candidate):
-                return candidate, title
-    raise FileNotFoundError("Downloaded video file not found")
+
+    last_error = None
+    for extra in configs:
+        try:
+            opts = {**base_opts, **extra}
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(url, download=True)
+                title = info.get("title", "Unknown")
+                for ext in ["mp4", "mkv", "webm", "avi", "m4v"]:
+                    candidate = os.path.join(output_dir, f"yt_video.{ext}")
+                    if os.path.exists(candidate):
+                        return candidate, title
+                for f in os.listdir(output_dir):
+                    if f.startswith("yt_video"):
+                        return os.path.join(output_dir, f), title
+        except Exception as e:
+            last_error = str(e)
+            # Clean up any partial files before retry
+            for f in os.listdir(output_dir):
+                try: os.remove(os.path.join(output_dir, f))
+                except: pass
+            continue
+
+    raise Exception(
+        f"YouTube download failed. YouTube now requires browser authentication.\n"
+        f"Please use the 'Upload Video' tab instead — record a short video and upload it directly.\n"
+        f"(Technical reason: {last_error})"
+    )
 
 
 def extract_frames(video_path: str, max_frames: int = 12) -> list:

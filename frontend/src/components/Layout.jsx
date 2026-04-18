@@ -4,8 +4,9 @@ import { useTheme } from '../context/ThemeContext'
 import { useEffect } from 'react'
 import {
   LayoutDashboard, Activity, Mic, BarChart2, Brain,
-  Bell, Users, User, LogOut, Heart, Languages, VideoIcon
+  Bell, Users, User, LogOut, Heart, Languages, Video
 } from 'lucide-react'
+import { useParticles, useAutoTilt } from '../hooks/use3D'
 import SOSButton from './SOSButton'
 import MedReminder from './MedReminder'
 import './Layout.css'
@@ -16,7 +17,7 @@ const nav = [
   { to: '/voice',     icon: Mic,             label: 'Voice Assistant' },
   { to: '/analytics', icon: BarChart2,       label: 'Health Analytics' },
   { to: '/emotions',  icon: Brain,           label: 'Emotion Insights' },
-  { to: '/video',     icon: VideoIcon,       label: 'Video Analysis' },
+  { to: '/video',     icon: Video,           label: 'Video Analysis' },
   { to: '/alerts',    icon: Bell,            label: 'Alerts' },
   { to: '/caregiver', icon: Users,           label: 'Caregiver' },
   { to: '/profile',   icon: User,            label: 'Profile' },
@@ -50,6 +51,8 @@ export default function Layout() {
   const { theme, toggle } = useTheme()
   const navigate = useNavigate()
   useGoogleTranslate()
+  useParticles()
+  useAutoTilt()
 
   const handleLogout = () => { logout(); navigate('/login') }
 

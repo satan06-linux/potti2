@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Heart, Activity, Moon, Thermometer, Wind, Footprints, AlertTriangle, Brain, RefreshCw, Phone } from 'lucide-react'
+import { Heart, Activity, Moon, Thermometer, Wind, Footprints, AlertTriangle, Brain, RefreshCw } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import VitalCard from '../components/VitalCard'
