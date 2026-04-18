@@ -45,10 +45,10 @@ def chat(user_id: int, user_message: str, language: str = "en") -> dict:
         messages = [{"role": "system", "content": SYSTEM_PROMPT}] + history + \
                    [{"role": "user", "content": user_message}]
         resp = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.3-70b-versatile",
             messages=messages,
-            max_tokens=150,
-            temperature=0.7
+            max_tokens=200,
+            temperature=0.8
         )
         reply = resp.choices[0].message.content.strip()
     except Exception:

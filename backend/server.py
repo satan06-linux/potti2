@@ -255,6 +255,35 @@ def caregiver_patients():
         result.append({**dict(u), "risk_level": risk["risk_level"], "risk_score": risk["risk_score"]})
     return jsonify(result)
 
+# ── Video Analysis ────────────────────────────────────────────────────────────
+@app.route("/api/analyze-video-upload", methods=["POST"])
+@require_auth
+def analyze_video_upload():
+    """Upload a video file and get AI-powered emotional health analysis."""
+    if "video" not in request.files:
+        return jsonify({"error": "No video file provided"}), 400
+    file = request.files["video"]
+    if not file.filename:
+        return jsonify({"error": "Empty filename"}), 400
+    import tempfile
+    suffix = os.path.splitext(file.filename)[1] or ".mp4"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        file.save(tmp.name)
+        tmp_path = tmp.name
+    try:
+        from modules.video_analyzer import analyze_video
+        result = analyze_video(tmp_path)
+        if result.get("risk_level") in ["medium", "high"]:
+            trigger_alert(
+                g.user_id, "video_analysis",
+                "critical" if result["risk_level"] == "high" else "warning",
+                f"Video analysis detected: {result.get('ai_analysis','')[:200]}"
+            )
+        return jsonify(result)
+    finally:
+        try: os.unlink(tmp_path)
+        except: pass
+
 # ── SOS ──────────────────────────────────────────────────────────────────────
 @app.route("/api/sos", methods=["POST"])
 @require_auth

@@ -4,7 +4,7 @@ flask-socketio==5.3.6
 PyJWT==2.8.0
 python-dotenv==1.0.1
 vaderSentiment==3.3.2
-groq==0.9.0
+groq>=1.0.0
 opencv-python==4.10.0.84
 numpy==1.26.4
 deepface==0.0.93

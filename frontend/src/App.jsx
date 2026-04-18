@@ -12,6 +12,7 @@ import EmotionInsights from './pages/EmotionInsights'
 import AlertsPage from './pages/AlertsPage'
 import CaregiverDashboard from './pages/CaregiverDashboard'
 import Profile from './pages/Profile'
+import VideoAnalysis from './pages/VideoAnalysis'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -49,6 +50,7 @@ export default function App() {
               <Route path="alerts" element={<AlertsPage />} />
               <Route path="caregiver" element={<CaregiverDashboard />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="video" element={<VideoAnalysis />} />
             </Route>
           </Routes>
         </BrowserRouter>
