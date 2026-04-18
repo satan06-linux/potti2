@@ -34,3 +34,5 @@
 .hydration-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
 @media (max-width: 900px) { .alerts-layout { grid-template-columns: 1fr; } }
+
+.test-sms-btn { font-size: 13px; padding: 8px 14px; }

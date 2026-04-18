@@ -259,15 +259,23 @@ def caregiver_patients():
 @app.route("/api/sos", methods=["POST"])
 @require_auth
 def sos():
-    """Emergency SOS — immediately alerts caregiver via SMS and logs critical alert."""
     conn = get_connection()
     user = conn.execute("SELECT full_name FROM users WHERE id=?", (g.user_id,)).fetchone()
     conn.close()
     name = user["full_name"] if user else "Unknown"
-    msg = f"🆘 EMERGENCY SOS from {name}! They need immediate assistance. Please check on them right away."
+    msg = f"SOS from {name}! They need immediate assistance. Please check on them right away."
     trigger_alert(g.user_id, "SOS", "critical", msg)
     socketio.emit("sos_alert", {"user": name, "timestamp": datetime.now().isoformat()})
     return jsonify({"status": "sent", "message": "Emergency alert dispatched"})
+
+# ── Test Alert (dev helper) ───────────────────────────────────────────────────
+@app.route("/api/test-alert", methods=["POST"])
+@require_auth
+def test_alert():
+    """Send a test SMS to verify Twilio is working."""
+    from modules.twilio_alerts import send_sms_alert
+    success = send_sms_alert("This is a TEST alert from ElderCare AI. Your SMS alerts are working correctly!", "warning")
+    return jsonify({"success": success, "message": "SMS sent" if success else "SMS failed — check server logs"})
 
 # ── Fall Detection ────────────────────────────────────────────────────────────
 @app.route("/api/detect-fall", methods=["POST"])

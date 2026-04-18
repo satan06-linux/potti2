@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Bell, CheckCircle, AlertTriangle, Plus, Pill, Droplets } from 'lucide-react'
+import { Bell, CheckCircle, AlertTriangle, Plus, Pill, Droplets, Send } from 'lucide-react'
 import api from '../api'
 import './AlertsPage.css'
 
@@ -8,6 +8,7 @@ export default function AlertsPage() {
   const [meds, setMeds] = useState([])
   const [newMed, setNewMed] = useState({ name: '', time: '' })
   const [loading, setLoading] = useState(true)
+  const [testStatus, setTestStatus] = useState(null) // null | 'sending' | 'ok' | 'fail'
 
   const fetchData = async () => {
     const [a, m] = await Promise.all([api.get('/alerts'), api.get('/medications')])
@@ -35,6 +36,15 @@ export default function AlertsPage() {
     setMeds(prev => prev.map(m => m.id === id ? {...m, taken: 1} : m))
   }
 
+  const sendTestSMS = async () => {
+    setTestStatus('sending')
+    try {
+      const res = await api.post('/test-alert')
+      setTestStatus(res.data.success ? 'ok' : 'fail')
+    } catch { setTestStatus('fail') }
+    setTimeout(() => setTestStatus(null), 4000)
+  }
+
   if (loading) return <div className="loading-state">Loading alerts...</div>
 
   const unresolved = alerts.filter(a => !a.resolved)
@@ -50,6 +60,14 @@ export default function AlertsPage() {
         <div className="alert-counts">
           <span className="badge badge-high">{unresolved.length} active</span>
           <span className="badge badge-low">{resolved.length} resolved</span>
+          <button
+            className={`btn test-sms-btn ${testStatus === 'ok' ? 'btn-success' : testStatus === 'fail' ? 'btn-danger' : 'btn-ghost'}`}
+            onClick={sendTestSMS}
+            disabled={testStatus === 'sending'}
+          >
+            <Send size={14}/>
+            {testStatus === 'sending' ? 'Sending...' : testStatus === 'ok' ? '✅ SMS Sent!' : testStatus === 'fail' ? '❌ Failed' : 'Test SMS'}
+          </button>
         </div>
       </div>
 
